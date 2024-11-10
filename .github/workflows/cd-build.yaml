@@ -1,0 +1,40 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+
+jobs:
+  push-backend:
+    name: Build backend
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.build.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ../composite/build-push-gcloud/action.yaml
+        id: build
+        with:
+          google_key: ${{ secrets.GCLOUD_SECRET_KEY }}
+          repo: services/whisper-notes-backend
+          dockerfile: backend.Dockerfile
+          registry: europe-north1-docker.pkg.dev
+          project_id: ${{ secrets.GCLOUD_PROJECT }}
+  push-frontend:
+    name: Build frontend
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.build.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ../composite/build-push-gcloud/action.yaml
+        id: build
+        with:
+          google_key: ${{ secrets.GCLOUD_SECRET_KEY }}
+          repo: services/whisper-notes-frontend
+          dockerfile: frontend.Dockerfile
+          registry: europe-north1-docker.pkg.dev
+          project_id: ${{ secrets.GCLOUD_PROJECT }}

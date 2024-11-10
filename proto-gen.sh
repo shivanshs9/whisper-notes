@@ -3,11 +3,11 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # Backend
-# cd $SCRIPT_DIR/backend
-# yarn proto-loader-gen-types \
-#     --grpcLib=@grpc/grpc-js \
-#     --outDir=./src/generated/ \
-#     $SCRIPT_DIR/protos/*.proto
+cd $SCRIPT_DIR/backend
+yarn proto-loader-gen-types \
+    --grpcLib=@grpc/grpc-js \
+    --outDir=./src/generated/ \
+    $SCRIPT_DIR/protos/*.proto
 echo "Backend stubs generated..."
 
 # Frontend
@@ -22,5 +22,6 @@ npx protoc \
   --ts_out src/generated/ \
   --ts_opt long_type_string \
   --proto_path $SCRIPT_DIR/protos \
+  --ts_opt ts_nocheck \
   $SCRIPT_DIR/protos/*.proto
 echo "Frontend Stubs generated..."

@@ -1,0 +1,79 @@
+name: "Docker build & push to Artifact Registry"
+description: "Builds the docker image and pushes it to Google Artifact Registry"
+on:
+  workflow_call:
+    inputs:
+      repo:
+        description: "Repository name"
+        required: true
+      registry:
+        description: "Google Artifact registry"
+        required: false
+        default: "docker.pkg.dev"
+      dockerfile:
+        description: "Dockerfile path"
+        required: false
+        default: "Dockerfile"
+      context:
+        description: "Docker context"
+        required: false
+        default: "."
+      project_id:
+        description: "Google project ID"
+        required: true
+      google_key:
+        description: "Google service account key in BASE64"
+        required: true
+    outputs:
+      imageid:
+        description: "Image ID"
+        value: ${{ jobs.push.outputs.imageid }}
+      tag:
+        description: "Image tag"
+        value: ${{ jobs.push.outputs.tag }}
+jobs:
+  push:
+    name: "Build & Push"
+    runs-on: ubuntu-latest
+  outputs:
+    imageid:
+      description: "Image ID"
+      value: ${{ steps.build.outputs.imageid }}
+    tag:
+      description: "Image tag"
+      value: ${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+  steps:
+    - name: Docker login to Google Cloud
+      id: vars
+      run: |
+        echo "$B64_GOOGLE_KEY" | docker login -u _json_key_base64 --password-stdin https://$REGISTRY
+        echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+        echo "branch=$(echo "$branch" | tr '/\' '-')" >> $GITHUB_OUTPUT
+      shell: bash
+      env:
+        B64_GOOGLE_KEY: ${{ inputs.google_key }}
+        REGISTRY: ${{ inputs.registry }}
+#    - name: Check image
+#      id: image_exists
+#      continue-on-error: true
+#      uses: cloudposse/github-action-docker-image-exists@main
+#      with:
+#        registry: ${{ inputs.registry }}
+#        image_name: ${{ inputs.project_id }}/${{ inputs.repo }}
+#        tag: ${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+    - uses: docker/setup-buildx-action@v3
+      if: steps.image_exists.outcome == 'failure'
+    - uses: docker/build-push-action@v5
+#      if: steps.image_exists.outcome == 'failure'
+      id: build
+      with:
+        context: ${{ inputs.context }}
+        file: ${{ inputs.dockerfile }}
+#        cache-from: type=gha
+#        cache-to: type=gha,mode=max
+        push: true
+        labels: |
+          ci.run_id=${{ github.run_id }}
+        tags: |
+          ${{ inputs.registry }}/${{ inputs.project_id }}/${{ inputs.repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
