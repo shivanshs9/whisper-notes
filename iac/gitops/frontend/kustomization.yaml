@@ -24,4 +24,4 @@ labels:
 images:
   - name: frontend:latest
     newName: europe-north1-docker.pkg.dev/polynomial-new/services/whisper-notes-frontend
-    newTag: main-495d9ef
+    newTag: main-9560472

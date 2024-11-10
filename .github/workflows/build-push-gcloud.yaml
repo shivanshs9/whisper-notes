@@ -22,6 +22,11 @@ on:
         required: false
         default: "."
         type: string
+      build_args:
+        description: "Docker build args"
+        required: false
+        default: ""
+        type: string
     outputs:
       imageid:
         description: "Image ID"
@@ -70,7 +75,8 @@ jobs:
           push: true
           labels: |
             ci.run_id=${{ github.run_id }}
-          build-args:
-            - VITE_GRPC_BACKEND="${{ vars.VITE_GRPC_BACKEND }}"
+          build-args: |
+            ${{ inputs.build_args }}
+            ${{ vars.BUILD_ARGS }}
           tags: |
             ${{ inputs.registry }}/${{ secrets.GCLOUD_PROJECT }}/${{ inputs.repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}

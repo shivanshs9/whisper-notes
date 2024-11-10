@@ -9,9 +9,6 @@ spec:
       containers:
         - name: frontend
           image: frontend:latest
-          env:
-            - name: VITE_GRPC_BACKEND
-              value: "https://whisper-notes-backend.polynomial.finance"
           ports:
             - name: http
               containerPort: 80

@@ -14,7 +14,6 @@ RUN yarn protoc \
     ./protos/*.proto
 
 ARG VITE_GRPC_BACKEND="http://0.0.0.0:8080"
-ENV VITE_GRPC_BACKEND=${VITE_GRPC_BACKEND}
 RUN yarn build
 
 FROM flashspys/nginx-static:latest AS app
