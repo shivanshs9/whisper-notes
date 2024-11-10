@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
+  - ingress.yaml
 
 namePrefix: whisper-notes-
 namespace: debug # CHANGEME: default

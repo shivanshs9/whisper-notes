@@ -70,5 +70,7 @@ jobs:
           push: true
           labels: |
             ci.run_id=${{ github.run_id }}
+          build-args:
+            - VITE_GRPC_BACKEND="${{ vars.VITE_GRPC_BACKEND }}"
           tags: |
             ${{ inputs.registry }}/${{ secrets.GCLOUD_PROJECT }}/${{ inputs.repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
