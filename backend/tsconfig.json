@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "sourceMap": true,
+        "strict": true,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+        "outDir": "dist",
+        "paths": {
+            "@src/*": ["src/*"]
+        },
+        "typeRoots": [
+            "./node_modules/@types",
+            "./types"
+        ]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
