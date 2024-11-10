@@ -6,7 +6,7 @@ COPY protos ./protos
 
 RUN yarn --frozen-lockfile
 
-RUN yarn protoc \
+RUN mkdir -p src/generated && yarn protoc \
     --ts_out src/generated/ \
     --ts_opt long_type_string \
     --proto_path ./protos \

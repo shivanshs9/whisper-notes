@@ -47,18 +47,23 @@ export default function Transcript({ transcribedData }: Props) {
 
     const createNote = async () => {
         if (transcribedData != undefined) {
-            const call = await noteClient.createNote({
-                transcription: transcribedData.text,
-                audio: ''
-            });
-            console.log(call.status)
-            if (call.status.code != GrpcStatusCode.OK.toString()) {
+            try {
+                const call = await noteClient.createNote({
+                    transcription: transcribedData.text,
+                    audio: ''
+                });
+                console.log(call.status)
+                if (call.status.code != GrpcStatusCode.OK.toString()) {
                     console.warn(call)
                     setCreateStatus(`Error "${call.status.code}": "${call.status.detail}"`)
                 }
                 const status = call.response.status;
                 const note = call.response.note!!;
                 setCreateStatus(`Status "${status}": Created Note with ID "${note.id}`)
+            } catch (e) {
+                console.log('caught error in grpc call')
+                console.error(e)
+            }
         }
     }
 
