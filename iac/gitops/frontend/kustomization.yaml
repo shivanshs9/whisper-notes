@@ -10,8 +10,8 @@ namespace: debug # CHANGEME: default
 
 labels:
   - pairs:
-      app.kubernetes.io/name: whisper-notes-grpc
-      app.kubernetes.io/component: grpc-backend
+      app.kubernetes.io/name: whisper-notes-frontend
+      app.kubernetes.io/component: frontend
       app.kubernetes.io/part-of: whisper-notes
       app.kubernetes.io/managed-by: kustomize
       app.kubernetes.io/created-by: controller-manager
@@ -21,6 +21,6 @@ labels:
     includeSelectors: false
 
 images:
-  - name: grpc-backend:latest
-    newName: europe-north1-docker.pkg.dev/polynomial-new/services/whisper-notes-backend
+  - name: frontend:latest
+    newName: europe-north1-docker.pkg.dev/polynomial-new/services/whisper-notes-frontend
     newTag: main-495d9ef

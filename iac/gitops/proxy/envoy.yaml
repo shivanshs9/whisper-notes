@@ -30,7 +30,8 @@ static_resources:
                   max_grpc_timeout: 2s
           http_filters:
             - name: envoy.filters.http.router
-              typed_config: {}
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
   clusters:
   - name: notes-grpc-backend
     connect_timeout: 0.5s

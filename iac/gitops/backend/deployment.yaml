@@ -14,11 +14,11 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: sec-backend
-                  key: WEBPASSWORD
+            # - name: DB_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: sec-backend
+            #       key: WEBPASSWORD
           resources:
             requests:
               memory: "128Mi"
