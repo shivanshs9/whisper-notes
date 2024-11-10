@@ -9,6 +9,7 @@ import type { ProtoGrpcType } from "./generated/notes";
 import type { NoteServiceHandlers } from "./generated/notes/NoteService";
 import type { CreateNoteRequest } from "./generated/notes/CreateNoteRequest";
 import type { CreateNoteResponse } from "./generated/notes/CreateNoteResponse";
+import { Status } from "@grpc/grpc-js/build/src/constants";
 
 const PROTO_FILE = "notes.proto";
 
@@ -42,18 +43,23 @@ const NoteService: NoteServiceHandlers = {
     }
 
     // I will not save audio, because too much work for an interview :/
-    const newNote = DB.getRepository(DBNote).create({
-      transcription: transcription,
-    });
-
-    callback(null, {
-      status: "success",
-      errorMessage: "",
-      note: {
-        transcription: newNote.transcription,
-        id: "" + newNote.id
-      },
-    });
+    DB.getRepository(DBNote).save({
+      transcription: transcription
+    }).then((newNote) => {
+      callback(null, {
+        status: "success",
+        errorMessage: "",
+        note: {
+          transcription: newNote.transcription,
+          id: "" + newNote.id
+        },
+      });
+    }).catch((err) => {
+      callback({
+        code: Status.INTERNAL,
+        details: err
+      })
+    }) 
   },
   // RPC Method to list all notes
   ListNotes: (
