@@ -1,7 +1,12 @@
-import { useRef, useEffect } from "react";
-
+import { useRef, useEffect, useState } from "react";
 import { TranscriberData } from "../hooks/useTranscriber";
 import { formatAudioTimestamp } from "../utils/AudioUtils";
+
+import { NoteServiceClient } from "../generated/notes.client";
+import { GrpcTransport } from "../services";
+import { GrpcStatusCode } from "@protobuf-ts/grpcweb-transport";
+
+const noteClient = new NoteServiceClient(GrpcTransport);
 
 interface Props {
     transcribedData: TranscriberData | undefined;
@@ -9,6 +14,7 @@ interface Props {
 
 export default function Transcript({ transcribedData }: Props) {
     const divRef = useRef<HTMLDivElement>(null);
+    const [ createStatus, setCreateStatus ] = useState("");
 
     const saveBlob = (blob: Blob, filename: string) => {
         const url = URL.createObjectURL(blob);
@@ -38,6 +44,23 @@ export default function Transcript({ transcribedData }: Props) {
         const blob = new Blob([jsonData], { type: "application/json" });
         saveBlob(blob, "transcript.json");
     };
+
+    const createNote = async () => {
+        if (transcribedData != undefined) {
+            const call = await noteClient.createNote({
+                transcription: transcribedData.text,
+                audio: ''
+            });
+            console.log(call.status)
+            if (call.status.code != GrpcStatusCode.OK.toString()) {
+                    console.warn(call)
+                    setCreateStatus(`Error "${call.status.code}": "${call.status.detail}"`)
+                }
+                const status = call.response.status;
+                const note = call.response.note!!;
+                setCreateStatus(`Status "${status}": Created Note with ID "${note.id}`)
+        }
+    }
 
     // Scroll to the bottom when the component updates
     useEffect(() => {
@@ -83,18 +106,27 @@ export default function Transcript({ transcribedData }: Props) {
             {transcribedData && !transcribedData.isBusy && (
                 <div className='w-full text-right'>
                     <button
-                        onClick={exportTXT}
+                        onClick={createNote}
                         className='text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 inline-flex items-center'
+                    >
+                        Create Note
+                    </button>
+                    <button
+                        onClick={exportTXT}
+                        className='text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center'
                     >
                         Export TXT
                     </button>
                     <button
                         onClick={exportJSON}
-                        className='text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 inline-flex items-center'
+                        className='text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center'
                     >
                         Export JSON
                     </button>
                 </div>
+            )}
+            {createStatus && (
+                <p>{createStatus}</p>
             )}
         </div>
     );

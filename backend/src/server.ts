@@ -26,6 +26,7 @@ const createNote = (
   call: grpc.ServerUnaryCall<any, any>,
   callback: grpc.sendUnaryData<any>
 ) => {
+  console.log('create a new note...')
   const { audio, transcription } = call.request;
 
   if (!audio || !transcription) {
@@ -75,7 +76,6 @@ function startServer() {
       return;
     }
     console.log(`Server running at http://0.0.0.0:${port}`);
-    server.start();
   });
 }
 
