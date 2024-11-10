@@ -6,24 +6,22 @@ on:
       repo:
         description: "Repository name"
         required: true
+        type: string
       registry:
         description: "Google Artifact registry"
         required: false
         default: "docker.pkg.dev"
+        type: string
       dockerfile:
         description: "Dockerfile path"
         required: false
         default: "Dockerfile"
+        type: string
       context:
         description: "Docker context"
         required: false
         default: "."
-      project_id:
-        description: "Google project ID"
-        required: true
-      google_key:
-        description: "Google service account key in BASE64"
-        required: true
+        type: string
     outputs:
       imageid:
         description: "Image ID"
@@ -36,13 +34,10 @@ jobs:
     name: "Build & Push"
     runs-on: ubuntu-latest
     outputs:
-      imageid:
-        description: "Image ID"
-        value: ${{ steps.build.outputs.imageid }}
-      tag:
-        description: "Image tag"
-        value: ${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+      imageid: ${{ steps.build.outputs.imageid }}
+      tag: ${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
     steps:
+      - uses: actions/checkout@v4
       - name: Docker login to Google Cloud
         id: vars
         run: |
@@ -52,7 +47,7 @@ jobs:
           echo "branch=$(echo "$branch" | tr '/\' '-')" >> $GITHUB_OUTPUT
         shell: bash
         env:
-          B64_GOOGLE_KEY: ${{ inputs.google_key }}
+          B64_GOOGLE_KEY: ${{ secrets.GCLOUD_SECRET_KEY }}
           REGISTRY: ${{ inputs.registry }}
       #    - name: Check image
       #      id: image_exists
@@ -60,7 +55,7 @@ jobs:
       #      uses: cloudposse/github-action-docker-image-exists@main
       #      with:
       #        registry: ${{ inputs.registry }}
-      #        image_name: ${{ inputs.project_id }}/${{ inputs.repo }}
+      #        image_name: ${{ secrets.GCLOUD_PROJECT }}/${{ inputs.repo }}
       #        tag: ${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
       - uses: docker/setup-buildx-action@v3
         if: steps.image_exists.outcome == 'failure'
@@ -76,4 +71,4 @@ jobs:
           labels: |
             ci.run_id=${{ github.run_id }}
           tags: |
-            ${{ inputs.registry }}/${{ inputs.project_id }}/${{ inputs.repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+            ${{ inputs.registry }}/${{ secrets.GCLOUD_PROJECT }}/${{ inputs.repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
