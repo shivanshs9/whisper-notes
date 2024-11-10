@@ -15,7 +15,7 @@ jobs:
       version: ${{ steps.build.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./../composite/build-push-gcloud/action.yaml
+      - uses: ./composite/build-push-gcloud
         id: build
         with:
           google_key: ${{ secrets.GCLOUD_SECRET_KEY }}
@@ -30,7 +30,7 @@ jobs:
       version: ${{ steps.build.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./../composite/build-push-gcloud/action.yaml
+      - uses: ./composite/build-push-gcloud
         id: build
         with:
           google_key: ${{ secrets.GCLOUD_SECRET_KEY }}
