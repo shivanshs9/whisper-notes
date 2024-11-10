@@ -1,12 +1,16 @@
-import * as grpc from '@grpc/grpc-js';
-import * as protoLoader from '@grpc/proto-loader';
+import * as grpc from "@grpc/grpc-js";
+import * as protoLoader from "@grpc/proto-loader";
 import { join } from "node:path";
-import 'dotenv/config';
+import "dotenv/config";
 
-import { DB, InitializeDb } from './db';
-import { Note } from './entity/note';
+import { DB, InitializeDb } from "./db";
+import { Note as DBNote } from "./entity/note";
+import type { ProtoGrpcType } from "./generated/notes";
+import type { NoteServiceHandlers } from "./generated/notes/NoteService";
+import type { CreateNoteRequest } from "./generated/notes/CreateNoteRequest";
+import type { CreateNoteResponse } from "./generated/notes/CreateNoteResponse";
 
-const PROTO_FILE = 'notes.proto';
+const PROTO_FILE = "notes.proto";
 
 const packageDefinition = protoLoader.loadSync(PROTO_FILE, {
   keepCase: true,
@@ -14,69 +18,73 @@ const packageDefinition = protoLoader.loadSync(PROTO_FILE, {
   enums: String,
   defaults: true,
   oneofs: true,
-  includeDirs: [process.env.PROTO_PATH!!, join(__dirname, 'generated')]
+  includeDirs: [process.env.PROTO_PATH!!, join(__dirname, "generated")],
 });
-const protoDescriptor = grpc.loadPackageDefinition(packageDefinition) as any;
-const noteService = protoDescriptor.notes.NoteService;
+const proto = grpc.loadPackageDefinition(
+  packageDefinition
+) as unknown as ProtoGrpcType;
 
-const notes: { [key: string]: any } = {};
+const NoteService: NoteServiceHandlers = {
+  // RPC Method to create a new note
+  CreateNote: (
+    call: grpc.ServerUnaryCall<CreateNoteRequest, CreateNoteResponse>,
+    callback: grpc.sendUnaryData<CreateNoteResponse>
+  ) => {
+    console.log("create a new note...");
+    const { audio, transcription } = call.request;
 
-// RPC Method to create a new note
-const createNote = (
-  call: grpc.ServerUnaryCall<any, any>,
-  callback: grpc.sendUnaryData<any>
-) => {
-  console.log('create a new note...')
-  const { audio, transcription } = call.request;
+    if (!transcription) {
+      callback(null, {
+        status: "failure",
+        errorMessage: "Transcription is a required field.",
+      });
+      return;
+    }
 
-  if (!audio || !transcription) {
-    callback(null, {
-      status: 'failure',
-      errorMessage: 'Audio and transcription are required fields.',
+    // I will not save audio, because too much work for an interview :/
+    const newNote = DB.getRepository(DBNote).create({
+      transcription: transcription,
     });
-    return;
-  }
 
-  // I will not save audio, because too much work for an interview :/
-  const newNote = DB.getRepository(Note).create({
-    transcription: transcription,
-  })
-
-  callback(null, {
-    status: 'success',
-    errorMessage: '',
-    note: newNote,
-  });
+    callback(null, {
+      status: "success",
+      errorMessage: "",
+      note: {
+        transcription: newNote.transcription,
+        id: "" + newNote.id
+      },
+    });
+  },
+  // RPC Method to list all notes
+  ListNotes: (
+    call: grpc.ServerUnaryCall<any, any>,
+    callback: grpc.sendUnaryData<any>
+  ) => {
+    console.log("fetching all notes...");
+    DB.getRepository(DBNote)
+      .find()
+      .then((allNotes) => callback(null, { notes: allNotes }));
+  },
 };
-
-// RPC Method to list all notes
-const listNotes = (
-  call: grpc.ServerUnaryCall<any, any>,
-  callback: grpc.sendUnaryData<any>
-) => {
-  DB.getRepository(Note).find().then((allNotes) =>
-    callback(null, { notes: allNotes })
-  )
-};
-
 function startServer() {
   const server = new grpc.Server();
 
-  InitializeDb()
+  InitializeDb();
 
-  server.addService(noteService.service, {
-    CreateNote: createNote,
-    ListNotes: listNotes,
-  });
+  server.addService(proto.notes.NoteService.service, NoteService);
 
-  const port = '8080';
-  server.bindAsync(`0.0.0.0:${port}`, grpc.ServerCredentials.createInsecure(), (err, bindPort) => {
-    if (err) {
-      console.error(`Error binding server: ${err.message}`);
-      return;
+  const port = "8080";
+  server.bindAsync(
+    `0.0.0.0:${port}`,
+    grpc.ServerCredentials.createInsecure(),
+    (err, bindPort) => {
+      if (err) {
+        console.error(`Error binding server: ${err.message}`);
+        return;
+      }
+      console.log(`Server running at http://0.0.0.0:${port}`);
     }
-    console.log(`Server running at http://0.0.0.0:${port}`);
-  });
+  );
 }
 
 startServer();

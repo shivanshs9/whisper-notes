@@ -24,11 +24,21 @@ static_resources:
               - "*"
               routes:
               - match:
-                  prefix: "/"
+                  prefix: "/api/"
                 route:
                   cluster: notes-grpc-backend
                   max_grpc_timeout: 2s
+                  prefix_rewrite: "/"
+              cors:
+                allow_origin_string_match:
+                  - prefix: "*"
+                allow_methods: GET, PUT, DELETE, POST, OPTIONS
+                allow_headers: keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,custom-header-1,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout
+                max_age: "1728000"
           http_filters:
+            - name: envoy.filters.http.cors
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
             - name: envoy.filters.http.router
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
