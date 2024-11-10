@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - service.yaml
+
+namePrefix: whisper-notes-
+namespace: debug # CHANGEME: default
+
+labels:
+  - pairs:
+      app.kubernetes.io/name: whisper-notes-grpc
+      app.kubernetes.io/component: grpc-backend
+      app.kubernetes.io/part-of: whisper-notes
+      app.kubernetes.io/managed-by: kustomize
+      app.kubernetes.io/created-by: controller-manager
+    includeSelectors: true
+  - pairs:
+      app.kubernetes.io/version: latest # TODO: add support of dynamic versioning in label
+    includeSelectors: false
+
+images:
+  - name: grpc-backend:latest
+    newName: europe-north1-docker.pkg.dev/polynomial-new/services/whisper-notes-backend
+    newTag: latest

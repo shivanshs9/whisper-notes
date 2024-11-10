@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - service.yaml
+
+namePrefix: whisper-notes-
+namespace: debug # CHANGEME: default
+
+configMapGenerator:
+  - files:
+      - envoy.yaml
+    name: cm-envoy-proxy
+
+labels:
+  - pairs:
+      app.kubernetes.io/name: whisper-notes-grpc
+      app.kubernetes.io/component: envoy-proxy
+      app.kubernetes.io/part-of: whisper-notes
+      app.kubernetes.io/managed-by: kustomize
+      app.kubernetes.io/created-by: controller-manager
+    includeSelectors: true
+  - pairs:
+      app.kubernetes.io/version: latest # TODO: add support of dynamic versioning in label
+    includeSelectors: false
