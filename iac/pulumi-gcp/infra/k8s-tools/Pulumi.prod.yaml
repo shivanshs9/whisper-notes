@@ -1,0 +1,7 @@
+encryptionsalt: v1:rJqNqFtNo3k=:v1:/pH6ZHVlVq+pb4bN:PA5f3qC95QU8lOwGB4YkVykohoDIWg==
+config:
+  gcp:project: "" # CHANGEME: GCP Project ID
+  project: whisper
+  env: "prod"
+  region: "" # CHANGEME: GCP Region
+  shortRegion: "" # CHANGEME: GCP Short Region

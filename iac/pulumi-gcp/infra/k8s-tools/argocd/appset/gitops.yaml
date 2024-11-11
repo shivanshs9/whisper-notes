@@ -12,7 +12,7 @@ spec:
   generators:
     - git:
         directories:
-          - path: services/*
+          - path: iac/services/*
         repoURL: https://github.com/shivanshs9/whisper-notes
         revision: main
   template:

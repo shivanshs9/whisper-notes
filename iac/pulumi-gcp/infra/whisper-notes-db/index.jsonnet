@@ -58,7 +58,6 @@
       Config: $.Config,
       privateNetwork: '${refNetwork.outputs["networkId"]}',
       name: 'whisper-notes',
-      tier: 'db-n1-standard-1',
       options: {
         dependsOn: [
           '${DbPrivateVpcConnection}',

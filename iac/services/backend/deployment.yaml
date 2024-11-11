@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: backend
+          image: grpc-backend:latest
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sec-whisper-backend-db
+                  key: POSTGRES_PASSWORD
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sec-whisper-backend-db
+                  key: POSTGRES_USER
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: sec-whisper-backend-db
+                  key: POSTGRES_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: sec-whisper-backend-db
+                  key: POSTGRES_PORT
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: sec-whisper-backend-db
+                  key: POSTGRES_NAME
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"

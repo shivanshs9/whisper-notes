@@ -1,0 +1,12 @@
+name: docker-repos
+runtime:
+  name: yaml
+  options:
+    compiler: jsonnet index.jsonnet
+description: GCP Program to provision Artifact Registry repositories
+config:
+  project:
+    type: string
+    default: docker-repos
+  env:
+    type: string
