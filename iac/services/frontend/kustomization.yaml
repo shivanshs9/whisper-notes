@@ -2,27 +2,27 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - deployment.yaml
-  - service.yaml
-  - ingress.yaml
+- deployment.yaml
+- service.yaml
+- ingress.yaml
 
 namePrefix: whisper-notes-
 namespace: default
 
 labels:
-  - pairs:
-      app.kubernetes.io/name: whisper-notes-frontend
-      app.kubernetes.io/component: frontend
-      app.kubernetes.io/part-of: whisper-notes
-      app.kubernetes.io/managed-by: kustomize
-      app.kubernetes.io/created-by: controller-manager
-    includeSelectors: true
-  - pairs:
-      app.kubernetes.io/version: latest # TODO: add support of dynamic versioning in label
-    includeSelectors: false
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/created-by: controller-manager
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: whisper-notes-frontend
+    app.kubernetes.io/part-of: whisper-notes
+- pairs:
+    app.kubernetes.io/version: latest
 
-images:
-  - name: frontend:latest
     # CHANGEME: replace with GCP Artifact Registry
-    newName: europe-north1-docker.pkg.dev/${GCP_PROJECT}/services/whisper-notes-frontend
-    newTag: main-3354b15
+images:
+- name: frontend
+- name: frontend:latest
+  newName: europe-north1-docker.pkg.dev/${GCP_PROJECT}/services/whisper-notes-frontend
+  newTag: main-3354b15
