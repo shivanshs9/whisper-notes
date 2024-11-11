@@ -24,3 +24,7 @@ If using the Pulumi modules to create, then the service account is created autom
 ### Frontend build requires Backend URL
 
 In the [frontend build job](./build-push-gcloud.yaml), you might need to change the URL at which backend service is deployed. This is used as a build arg in [frontend dockerfile](../../frontend.Dockerfile).
+
+### Auto-Deployment
+
+To avoid unnecessary bot commits, this feature is disabled by default. If you want to enable CD and deploy the build on every commit, then just enable the [deploy job](./cd-build.yaml).

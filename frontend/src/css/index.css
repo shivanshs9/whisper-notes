@@ -117,3 +117,9 @@ audio::-webkit-media-controls-panel {
 .list-notes {
     width: 60vw;
 }
+
+.credits {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}

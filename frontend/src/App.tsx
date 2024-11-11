@@ -36,7 +36,7 @@ function App() {
                 {currentPage === "create" ? <CreateNote /> : <ListNotes />}
             </div>
 
-            <div className='bottom-4'>
+            <div className='bottom-4 credits'>
                 <p>
                 Made with{" "}
                 <a
@@ -53,7 +53,10 @@ function App() {
                     href='https://github.com/shivanshs9'
                 >
                     @shivanshs9
-                </a>
+                </a> 🚀
+                </p>
+                <p>
+                    Big Thanks to the original <a className="underline" href="https://github.com/xenova/whisper-web">Whisper Web</a> project! ❤️
                 </p>
             </div>
         </div>
