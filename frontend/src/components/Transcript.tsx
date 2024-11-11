@@ -4,7 +4,6 @@ import { formatAudioTimestamp } from "../utils/AudioUtils";
 
 import { NoteServiceClient } from "../generated/notes.client";
 import { GrpcTransport } from "../services";
-import { GrpcStatusCode } from "@protobuf-ts/grpcweb-transport";
 
 const noteClient = new NoteServiceClient(GrpcTransport);
 
@@ -53,7 +52,7 @@ export default function Transcript({ transcribedData }: Props) {
                     audio: ''
                 });
                 console.log(call.status)
-                if (call.status.code != GrpcStatusCode.OK.toString()) {
+                if (call.status.code != 'OK') {
                     console.warn(call)
                     setCreateStatus(`Error "${call.status.code}": "${call.status.detail}"`)
                 }

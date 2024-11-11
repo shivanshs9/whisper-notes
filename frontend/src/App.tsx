@@ -1,25 +1,39 @@
-import { AudioManager } from "./components/AudioManager";
-import Transcript from "./components/Transcript";
-import { useTranscriber } from "./hooks/useTranscriber";
+import { useState } from "react";
+import CreateNote from "./pages/CreateNote";
+import ListNotes from "./pages/ListNotes";
 
 // @ts-ignore
 const IS_WEBGPU_AVAILABLE = !!navigator.gpu;
 
 function App() {
-    const transcriber = useTranscriber();
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState("create");
+
+    const toggleMenu = () => {
+        setMenuOpen(!menuOpen);
+    };
+
+    const switchPage = (page: string) => {
+        setCurrentPage(page);
+        setMenuOpen(false);
+    };
 
     return IS_WEBGPU_AVAILABLE ? (
         <div className='flex justify-center items-center min-h-screen'>
             <div className='container flex flex-col justify-center items-center'>
+                <div className='absolute top-4 left-4 z-20'>
+                    <button onClick={toggleMenu} className='hamburger'>
+                        {menuOpen ? '✖' : '☰'}
+                    </button>
+                </div>
+                <div className={`menu ${menuOpen ? 'open' : ''}`}>
+                    <a href='#' onClick={() => switchPage("create")} className='menu-item'>Write a new entry...</a>
+                    <a href='#' onClick={() => switchPage("list")} className='menu-item'>List Notes</a>
+                </div>
                 <h1 className='text-5xl font-extrabold tracking-tight text-slate-900 sm:text-7xl text-center'>
                     Whisper Notes
                 </h1>
-                <h2 className='mt-3 mb-5 px-4 text-center text-1xl font-semibold tracking-tight text-slate-900 sm:text-2xl'>
-                    Write Notes on the Go! <br />
-                    ML-powered speech recognition directly in your browser.
-                </h2>
-                <AudioManager transcriber={transcriber} />
-                <Transcript transcribedData={transcriber.output} />
+                {currentPage === "create" ? <CreateNote /> : <ListNotes />}
             </div>
 
             <div className='absolute bottom-4'>

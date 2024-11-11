@@ -16,3 +16,35 @@ audio::-webkit-media-controls-panel {
     width: 41rem /* 656px */;
     max-width: 95vw;
 }
+
+.hamburger {
+    font-size: 2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+}
+
+.menu.open {
+    transform: translateY(0);
+}
+
+.menu-item {
+    margin: 1rem 0;
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: black;
+}

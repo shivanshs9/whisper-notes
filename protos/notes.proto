@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package notes;
 
+
 service NoteService {
     rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse) {};
     rpc ListNotes(ListNotesRequest) returns (ListNotesResponse) {};
@@ -11,6 +12,7 @@ message Note {
     string id = 1;
     string audio = 2;
     string transcription = 3;
+    int64 createdAt = 4;
 }
 
 message CreateNoteRequest {

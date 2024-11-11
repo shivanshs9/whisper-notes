@@ -10,6 +10,8 @@ import type { NoteServiceHandlers } from "./generated/notes/NoteService";
 import type { CreateNoteRequest } from "./generated/notes/CreateNoteRequest";
 import type { CreateNoteResponse } from "./generated/notes/CreateNoteResponse";
 import { Status } from "@grpc/grpc-js/build/src/constants";
+import { ListNotesRequest } from "./generated/notes/ListNotesRequest";
+import { ListNotesResponse } from "./generated/notes/ListNotesResponse";
 
 const PROTO_FILE = "notes.proto";
 
@@ -33,7 +35,7 @@ const NoteService: NoteServiceHandlers = {
   ) => {
     console.log("create a new note...");
     const { audio, transcription } = call.request;
-    console.log(call.getPeer())
+    console.log(call.getPeer());
 
     if (!transcription) {
       callback(null, {
@@ -44,33 +46,44 @@ const NoteService: NoteServiceHandlers = {
     }
 
     // I will not save audio, because too much work for an interview :/
-    DB.getRepository(DBNote).save({
-      transcription: transcription
-    }).then((newNote) => {
-      callback(null, {
-        status: "success",
-        errorMessage: "",
-        note: {
-          transcription: newNote.transcription,
-          id: "" + newNote.id
-        },
-      });
-    }).catch((err) => {
-      callback({
-        code: Status.INTERNAL,
-        details: err
+    DB.getRepository(DBNote)
+      .save({
+        transcription: transcription,
       })
-    }) 
+      .then((newNote) => {
+        callback(null, {
+          status: "success",
+          errorMessage: "",
+          note: {
+            transcription: newNote.transcription,
+            id: "" + newNote.id,
+          },
+        });
+      })
+      .catch((err) => {
+        callback({
+          code: Status.INTERNAL,
+          details: err,
+        });
+      });
   },
   // RPC Method to list all notes
   ListNotes: (
-    call: grpc.ServerUnaryCall<any, any>,
-    callback: grpc.sendUnaryData<any>
+    call: grpc.ServerUnaryCall<ListNotesRequest, ListNotesResponse>,
+    callback: grpc.sendUnaryData<ListNotesResponse>
   ) => {
     console.log("fetching all notes...");
     DB.getRepository(DBNote)
       .find()
-      .then((allNotes) => callback(null, { notes: allNotes }));
+      .then((allNotes) =>
+        callback(null, {
+          notes: allNotes.map((note) => ({
+            transcription: note.transcription,
+            id: "" + note.id,
+            createdAt: note.createdAt.getMilliseconds().toString(),
+          })),
+        })
+      );
   },
 };
 function startServer() {
