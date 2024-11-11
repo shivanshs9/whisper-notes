@@ -1,0 +1,23 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: rt-api-proxy
+spec:
+  hostnames:
+    - whisper-notes.shivanshs9.me
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public-gateway
+      namespace: default
+  rules:
+    - backendRefs:
+        - group: ''
+          kind: Service
+          name: whisper-notes-proxy
+          port: 8443
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /api

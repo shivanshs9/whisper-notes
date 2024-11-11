@@ -26,5 +26,3 @@ dist-ssr
 *.sln
 *.sw?
 
-# Temporary hack
-**/ingress.yaml
