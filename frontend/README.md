@@ -1,5 +1,7 @@
 # Whisper Web
 
+Disclaimer: The code is derived from the original [Whisper web project](https://github.com/xenova/whisper-web). Huge shoutout to [@xenova](https://github.com/xenova) for an amazing use-case of Whisper model!
+
 ### Original excerpt
 > ML-powered speech recognition directly in your browser! Built with [🤗 Transformers.js](https://github.com/xenova/transformers.js).
 > Check out the demo site [here](https://huggingface.co/spaces/Xenova/whisper-webgpu).

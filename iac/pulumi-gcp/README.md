@@ -98,4 +98,11 @@ pulumi up -s prod --diff
 
 ## Next steps
 
-Once all the provisioning steps are successful, refer to [k8s services](../services/).
+Once all the provisioning steps are successful, it's time to configure DNS for public-facing frontend and API gateway.
+In your DNS nameserver provider (like Cloudflare), point A record to the IP address of gateway. To get the External address, use:
+
+```bash
+kubectl get gateway
+```
+
+For runtime configs related to applications, refer to [k8s services](../services/).
