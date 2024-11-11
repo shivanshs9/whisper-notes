@@ -34,44 +34,52 @@ on:
       tag:
         description: "Image tag"
         value: ${{ jobs.push.outputs.tag }}
+      full_tag:
+        description: "Full image tag"
+        value: ${{ jobs.push.outputs.full_tag }}
 jobs:
   push:
     name: "Build & Push"
     runs-on: ubuntu-latest
     outputs:
       imageid: ${{ steps.build.outputs.imageid }}
-      tag: ${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+      tag: ${{ steps.vars.outputs.tag }}
+      full_tag: ${{ steps.vars.outputs.full_tag }}
     steps:
       - uses: actions/checkout@v4
       - name: Docker login to Google Cloud
         id: vars
         run: |
           echo "$B64_GOOGLE_KEY" | docker login -u _json_key_base64 --password-stdin https://$REGISTRY
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          sha_short=$(git rev-parse --short HEAD)
           branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          echo "branch=$(echo "$branch" | tr '/\' '-')" >> $GITHUB_OUTPUT
+          tag="${branch}-${sha_short}"
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "full_tag=$REGISTRY/$GCP_PROJECT/$REPO:$tag" >> $GITHUB_OUTPUT
         shell: bash
         env:
+          GCP_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
           B64_GOOGLE_KEY: ${{ secrets.GCLOUD_SECRET_KEY }}
           REGISTRY: ${{ inputs.registry }}
-      #    - name: Check image
-      #      id: image_exists
-      #      continue-on-error: true
-      #      uses: cloudposse/github-action-docker-image-exists@main
-      #      with:
-      #        registry: ${{ inputs.registry }}
-      #        image_name: ${{ secrets.GCLOUD_PROJECT }}/${{ inputs.repo }}
-      #        tag: ${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+          REPO: ${{ inputs.repo }}
+      - name: Check image
+        id: image_exists
+        continue-on-error: true
+        uses: cloudposse/github-action-docker-image-exists@main
+        with:
+          registry: ${{ inputs.registry }}
+          image_name: ${{ secrets.GCLOUD_PROJECT }}/${{ inputs.repo }}
+          tag: ${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
       - uses: docker/setup-buildx-action@v3
         if: steps.image_exists.outcome == 'failure'
       - uses: docker/build-push-action@v5
-      #      if: steps.image_exists.outcome == 'failure'
+        if: steps.image_exists.outcome == 'failure'
         id: build
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
-      #        cache-from: type=gha
-      #        cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           push: true
           labels: |
             ci.run_id=${{ github.run_id }}
@@ -79,4 +87,4 @@ jobs:
             ${{ vars.BUILD_ARGS }}
             ${{ inputs.build_args }}
           tags: |
-            ${{ inputs.registry }}/${{ secrets.GCLOUD_PROJECT }}/${{ inputs.repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+            ${{ steps.vars.outputs.full_tag }}

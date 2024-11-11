@@ -27,3 +27,27 @@ jobs:
       build_args: |
         VITE_GRPC_BACKEND=https://whisper-notes.shivanshs9.me/api
     secrets: inherit
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [push-backend, push-frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: fregante/setup-git-user@v2
+      - name: "Update Deployment Image Tag"
+        working-directory: "iac/services"
+        run: |
+          # Write the new image tags to the kustomization files
+          cd backend
+          kustomize edit set image grpc-backend=$BACKEND_IMAGE
+          cd ../frontend
+          kustomize edit set image frontend=$FRONTEND_IMAGE
+
+          # Commit the changes
+          git add -u
+          sha_short=$(git rev-parse --short HEAD)
+          git commit -m "cd: Update image to main-$sha_short"
+          git push
+        env:
+          BACKEND_IMAGE: ${{ needs.push-backend.outputs.full_tag }}
+          FRONTEND_IMAGE: ${{ needs.push-frontend.outputs.full_tag }}
