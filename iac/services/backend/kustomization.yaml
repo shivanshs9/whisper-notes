@@ -20,9 +20,8 @@ labels:
 - pairs:
     app.kubernetes.io/version: latest
 
-    # CHANGEME: replace with GCP Artifact Registry
 images:
 - name: grpc-backend
-- name: grpc-backend:latest
-  newName: europe-north1-docker.pkg.dev/${GCP_PROJECT}/services/whisper-notes-backend
+  # CHANGEME: replace with GCP Artifact Registry
+  newName: europe-north1-docker.pkg.dev/${PROJECT}/services/whisper-notes-backend
   newTag: main-5d9cf2b

@@ -39,15 +39,16 @@ jobs:
         run: |
           # Write the new image tags to the kustomization files
           cd backend
-          kustomize edit set image grpc-backend=$BACKEND_IMAGE
+          kustomize edit set image grpc-backend=$REGISTRY/$GCP_PROJECT/services/whisper-notes-backend:$IMAGE_TAG
           cd ../frontend
-          kustomize edit set image frontend=$FRONTEND_IMAGE
+          kustomize edit set image frontend=$REGISTRY/$GCP_PROJECT/services/whisper-notes-frontend:$IMAGE_TAG
 
           # Commit the changes
           git add -u
           sha_short=$(git rev-parse --short HEAD)
-          git commit -m "cd: Update image to main-$sha_short"
+          git commit -m "cd: Update image to $sha_short"
           git push
         env:
-          BACKEND_IMAGE: ${{ needs.push-backend.outputs.full_tag }}
-          FRONTEND_IMAGE: ${{ needs.push-frontend.outputs.full_tag }}
+          REGISTRY: europe-north1-docker.pkg.dev
+          GCP_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
+          IMAGE_TAG: ${{ needs.push-backend.outputs.tag }}

@@ -20,9 +20,9 @@ labels:
 - pairs:
     app.kubernetes.io/version: latest
 
-    # CHANGEME: replace with GCP Artifact Registry
+    
 images:
 - name: frontend
-- name: frontend:latest
-  newName: europe-north1-docker.pkg.dev/${GCP_PROJECT}/services/whisper-notes-frontend
+  # CHANGEME: replace with GCP Artifact Registry
+  newName: europe-north1-docker.pkg.dev/${PROJECT}/services/whisper-notes-frontend
   newTag: main-3354b15
