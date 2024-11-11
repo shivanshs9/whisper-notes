@@ -33,6 +33,7 @@ const NoteService: NoteServiceHandlers = {
   ) => {
     console.log("create a new note...");
     const { audio, transcription } = call.request;
+    console.log(call.getPeer())
 
     if (!transcription) {
       callback(null, {
