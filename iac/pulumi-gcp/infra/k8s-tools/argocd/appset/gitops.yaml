@@ -19,11 +19,11 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/component: argo-app
-        app.kubernetes.io/instance: app-{{ path[1] }}
+        app.kubernetes.io/instance: app-{{ path[2] }}
         app.kubernetes.io/managed-by: Argo
         app.kubernetes.io/part-of: argocd
         polynomial.fi/environment: production
-      name: app-{{ path[1] }}
+      name: app-{{ path[2] }}
     spec:
       destination:
         server: https://kubernetes.default.svc

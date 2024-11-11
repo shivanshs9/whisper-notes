@@ -81,7 +81,7 @@
       instance: '${DbInstance.name}',
       password: '${DbUserPassword.result}',
     },
-  } + (import '../../lib/secrets/index.libsonnet').CreateSecretData('service-whisper-notes-db', '${secDataWhisperDbCreds}', $.Config),
+  } + (import '../../lib/secrets/index.libsonnet').CreateSecretData('service-notes-db', '${secDataWhisperDbCreds}', $.Config),
   outputs: {
     dbEndpoint: '${DbInstance.privateIpAddress}',
     dbConnectionString: '${DbInstance.connectionName}',
