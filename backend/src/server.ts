@@ -35,10 +35,9 @@ const NoteService: NoteServiceHandlers = {
   ) => {
     console.log("create a new note...");
     const { audio, transcription } = call.request;
-    console.log(call.getPeer());
-    console.log(call.metadata.toJSON());
 
-    const userIp = call.getPeer().split(":")[0];
+    const xForwardedFor = call.metadata.get("x-forwarded-for")[0] as string;
+    const userIp = xForwardedFor ? xForwardedFor.split(",")[0].trim() : call.getPeer().split(":")[0];
 
     if (!transcription) {
       callback(null, {
@@ -77,8 +76,6 @@ const NoteService: NoteServiceHandlers = {
     callback: grpc.sendUnaryData<ListNotesResponse>
   ) => {
     console.log("fetching all notes...");
-    console.log(call.getPeer());
-    console.log(call.metadata.toJSON());
     DB.getRepository(DBNote)
       .find()
       .then((allNotes) =>

@@ -10,6 +10,11 @@ static_resources:
       - name: envoy.filters.network.http_connection_manager
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          original_ip_detection_extensions:
+          - name: envoy.http.original_ip_detection.custom_header
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.http.original_ip_detection.custom_header.v3.CustomHeaderConfig
+              header_name: "CF-Connecting-IP"
           access_log:
           - name: envoy.access_loggers.stdout
             typed_config:

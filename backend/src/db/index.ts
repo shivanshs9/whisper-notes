@@ -22,5 +22,6 @@ export const InitializeDb = () => {
         console.log("Successful DB connection.")
     }).catch((err) => {
         console.error("Error in DB connection: ", err)
+        process.exit(1)
     })
 }
