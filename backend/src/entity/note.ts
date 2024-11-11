@@ -14,4 +14,7 @@ export class Note {
 
     @CreateDateColumn({ type: columnTypeTimestamp() })
     public createdAt!: Date;
+
+    @Column()
+    public userIdentifier?: string
 }

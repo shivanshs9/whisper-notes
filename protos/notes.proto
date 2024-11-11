@@ -13,6 +13,7 @@ message Note {
     string audio = 2;
     string transcription = 3;
     int64 createdAt = 4;
+    string userIdentifier = 5;
 }
 
 message CreateNoteRequest {
