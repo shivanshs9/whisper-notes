@@ -4,7 +4,7 @@
     Env: '${pulumi.stack}',
     Region: '${region}',
     ShortRegion: '${shortRegion}',
-    K8sVersion: 1.30,
+    K8sVersion: 1.29,
   },
   configuration: {
     project: {
@@ -22,12 +22,6 @@
     'gcp:project': {
       type: 'String',
     },
-    domainGroup: {
-      type: 'String'
-    },
-    domainTlsCertName: {
-      type: 'String'
-    }
   },
   variables: {
     k8sVersion: {
@@ -113,6 +107,46 @@
       },
       options: {
         provider: '${kubeProvider}',
+      },
+    },
+    kubeExternalSecretsChart: {
+      type: 'kubernetes:helm.sh/v4:Chart',
+      properties: {
+        name: 'secrets',
+        chart: 'external-secrets',
+        repositoryOpts: {
+          repo: 'https://charts.external-secrets.io/',
+        },
+        version: '0.9.14',
+        namespace: 'kube-system',
+        values: {
+          serviceAccount: {
+            create: false,
+            name: 'irsa-external-secrets',
+          },
+          podDisruptionBudget: {
+            enabled: true,
+            minAvailable: 1,
+            priorityClassName: 'system-cluster-critical',
+          },
+        },
+      },
+      options: {
+        provider: '${kubeProvider}',
+      }
+    },
+    kubeSecretsStore: {
+      type: 'kubernetes:yaml/v2:ConfigGroup',
+      properties: {
+        objs: [
+          import './template/secret-store.json',
+        ],
+      },
+      options: {
+        provider: '${kubeProvider}',
+        dependsOn: [
+          '${kubeExternalSecretsChart}'
+        ]
       },
     },
   },

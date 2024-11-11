@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: public-gateway
+  namespace: default
+spec:
+  gatewayClassName: gke-l7-gxlb
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: '*.shivanshs9.me' # CHANGEME: Wildcard domain host
+      allowedRoutes:
+        kinds:
+          - kind: HTTPRoute
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: 'tls-ingress-cert'

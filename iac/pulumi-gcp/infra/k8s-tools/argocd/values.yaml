@@ -1,0 +1,54 @@
+global:
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: node
+      whenUnsatisfiable: ScheduleAnyway
+
+configs:
+  params:
+    server.insecure: true
+
+server:
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+  ingress:
+    enabled: false
+  pdb:
+    enabled: false
+  rbacConfig:
+    policy.default: role:readonly
+
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - argocd-server
+          topologyKey: topology.kubernetes.io/zone
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - argocd-server
+          topologyKey: kubernetes.io/arch
+
+notifications:
+  cm:
+    create: true
+
+repoServer:
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+  pdb:
+    enabled: false
+
+applicationSet:
+  replicaCount: 0

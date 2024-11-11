@@ -1,0 +1,4 @@
+#! /bin/sh
+set -eu -o pipefail
+
+kustomize build --enable-helm --load-restrictor=LoadRestrictionsNone "$@"

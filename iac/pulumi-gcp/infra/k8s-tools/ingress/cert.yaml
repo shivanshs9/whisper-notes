@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tls-ingress-cert
+  namespace: default
+spec:
+  secretName: tls-ingress-cert
+  dnsNames:
+    - "*.shivanshs9.me" # CHANGEME: Wildcard domain host
+  duration: 8760h
+  renewBefore: 168h
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: trusted-ca-issuer

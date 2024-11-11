@@ -1,0 +1,8 @@
+serviceAccount:
+  create: false
+  name: irsa-external-secrets
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+priorityClassName: system-cluster-critical

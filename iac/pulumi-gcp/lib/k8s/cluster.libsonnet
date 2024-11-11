@@ -23,11 +23,7 @@ local Utils = (import '../utils/config.libsonnet');
           enabled: true,
         },
       },
-      addonsConfig: {
-        istioConfig: {
-          disabled: false,  // This really doesn't work in Pulumi right now, manual steps are documented in README
-        },
-      },
+      deletionProtection: false,
       [if this.privateCluster then 'privateClusterConfig']: {
         enablePrivateNodes: true,
         masterIpv4CidrBlock: this.masterIpCidr,

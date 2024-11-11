@@ -30,12 +30,6 @@
       ipCidrRange: '${ipPrefix}.0.0/18',
       Config: $.Config,
     },
-    subnetPrivK8sMaster: (import '../../lib/network/subnet.libsonnet').Subnet {
-      name: 'priv-k8s-master',
-      network: '${vpc.id}',
-      ipCidrRange: '${ipPrefix}.64.0/28',
-      Config: $.Config,
-    },
     router: (import '../../lib/network/nat.libsonnet').Router {
       name: 'main',
       network: '${vpc.id}',

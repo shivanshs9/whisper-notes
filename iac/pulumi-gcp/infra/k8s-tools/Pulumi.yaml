@@ -1,0 +1,12 @@
+name: k8s-tools
+runtime:
+  name: yaml
+  options:
+    compiler: jsonnet index.jsonnet
+description: GCP Program to deploy various tools for k8s cluster
+config:
+  project:
+    type: string
+    default: k8s-tools
+  env:
+    type: string
