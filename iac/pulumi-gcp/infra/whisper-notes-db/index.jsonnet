@@ -37,11 +37,33 @@
         name: 'organization/init-network-k8s/${pulumi.stack}',
       },
     },
+    # Needed for CloudSQL Private connection
+    # https://cloud.google.com/sql/docs/mysql/private-ip#network_requirements
+    DbPrivateIpRange: (import '../../lib/network/ip.libsonnet').GlobalAddress {
+      Config: $.Config,
+      name: 'whisper-db',
+      network: '${refNetwork.outputs["networkId"]}',
+      purpose: 'VPC_PEERING',
+      addressType: 'INTERNAL',
+      prefixLength: 20,
+    },
+    DbPrivateVpcConnection: (import '../../lib/network/peering.libsonnet').Connection {
+      Config: $.Config,
+      network: '${refNetwork.outputs["networkId"]}',
+      reservedPeeringRanges: [
+        '${DbPrivateIpRange.name}',
+      ],
+    },
     DbInstance: (import '../../lib/sql/postgres.libsonnet').Database {
       Config: $.Config,
       privateNetwork: '${refNetwork.outputs["networkId"]}',
       name: 'whisper-notes',
-      tier: 'db-n1-standard-1'
+      tier: 'db-n1-standard-1',
+      options: {
+        dependsOn: [
+          '${DbPrivateVpcConnection}',
+        ],
+      },
     },
     PgDbWhisper: (import '../../lib/sql/postgres.libsonnet').SqlDB {
       database: 'whisper',

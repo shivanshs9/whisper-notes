@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - base
+  - appset
   - ingress.yaml
 
 helmCharts:
@@ -12,7 +13,7 @@ helmCharts:
     includeCRDs: true
     version: 6.7.5
     namespace: argocd
-    valuesFile: ../base/values.yaml
+    valuesFile: ./values.yaml
 
 patches:
   - path: patch-cm-kustomize.yaml

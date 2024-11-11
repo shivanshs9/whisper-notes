@@ -57,6 +57,21 @@
       },
       options: {
         provider: '${kubeProvider}',
+        dependsOn: [
+          '${toolCertManager}'
+        ]
+      }
+    },
+    toolArgoCd: {
+      type: 'kubernetes:kustomize/v2:Directory',
+      properties: {
+        directory: './argocd',
+      },
+      options: {
+        provider: '${kubeProvider}',
+        dependsOn: [
+          '${toolIngress}'
+        ]
       }
     },
   },

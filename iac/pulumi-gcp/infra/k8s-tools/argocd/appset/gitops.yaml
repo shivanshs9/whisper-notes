@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  labels:
+    app.kubernetes.io/component: argo-appset
+    app.kubernetes.io/instance: gitops-apps
+    app.kubernetes.io/name: gitops-apps
+    app.kubernetes.io/part-of: argocd
+  name: gitops-apps
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        directories:
+          - path: services/*
+        repoURL: https://github.com/shivanshs9/whisper-notes
+        revision: main
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: argo-app
+        app.kubernetes.io/instance: app-{{ path[1] }}
+        app.kubernetes.io/managed-by: Argo
+        app.kubernetes.io/part-of: argocd
+        polynomial.fi/environment: production
+      name: app-{{ path[1] }}
+    spec:
+      destination:
+        server: https://kubernetes.default.svc
+      project: default
+      source:
+        path: '{{ path }}'
+        repoURL: https://github.com/shivanshs9/whisper-notes.git
+        targetRevision: main
+      syncPolicy:
+        automated:
+          allowEmpty: true
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
