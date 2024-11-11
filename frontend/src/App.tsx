@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateNote from "./pages/CreateNote";
 import ListNotes from "./pages/ListNotes";
 
@@ -7,16 +7,28 @@ const IS_WEBGPU_AVAILABLE = !!navigator.gpu;
 
 function App() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState("create");
+    const [hashPath, setHashPath] = useState(window.location.hash);
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
     };
 
-    const switchPage = (page: string) => {
-        setCurrentPage(page);
-        setMenuOpen(false);
+    const listenToUrlChange = () => {
+        const newHashPath = window.location.hash;
+        console.log("Navigated to " + newHashPath);
+        setHashPath(newHashPath);
     };
+    useEffect(() => {
+        window.addEventListener("hashchange", listenToUrlChange);
+        return () => {
+            window.removeEventListener("hashchange", listenToUrlChange);
+        };
+    }, []);
+
+    const switchPage = (newPage: string) => {
+        location.hash = newPage;
+        setMenuOpen(false);
+    }
 
     return IS_WEBGPU_AVAILABLE ? (
         <div className='flex flex-col justify-center items-center min-h-screen'>
@@ -27,13 +39,13 @@ function App() {
                     </button>
                 </div>
                 <div className={`menu ${menuOpen ? 'open' : ''}`}>
-                    <a href='#' onClick={() => switchPage("create")} className='menu-item'>Write a new entry...</a>
-                    <a href='#' onClick={() => switchPage("list")} className='menu-item'>Journal so far</a>
+                    <a onClick={() => {switchPage("new")}} className='menu-item'>Write a new entry...</a>
+                    <a onClick={() => {switchPage("list")}} className='menu-item'>Journal so far</a>
                 </div>
                 <h1 className='text-5xl font-extrabold tracking-tight text-slate-900 sm:text-7xl text-center'>
                     Whisper Notes
                 </h1>
-                {currentPage === "create" ? <CreateNote /> : <ListNotes />}
+                {hashPath === "#list" ? <ListNotes /> : <CreateNote />}
             </div>
 
             <div className='bottom-4 credits'>

@@ -58,7 +58,7 @@ export default function Transcript({ transcribedData }: Props) {
                 }
                 const status = call.response.status;
                 const note = call.response.note!!;
-                setCreateStatus(`Status "${status}": Created Note with ID "${note.id}`)
+                setCreateStatus(`Status "${status}": Created Note with ID "${note.id}".`)
             } catch (e) {
                 console.log('caught error in grpc call')
                 console.error(e)
@@ -130,7 +130,9 @@ export default function Transcript({ transcribedData }: Props) {
                 </div>
             )}
             {createStatus && (
-                <p>{createStatus}</p>
+                <p className="p-4 bg-blue-50 dark:bg-blue-100 m-4">{createStatus} 
+                <span> <a className="underline text-red-400" href="#list">Wanna check out your past journals?</a></span>
+                </p>
             )}
         </div>
     );
