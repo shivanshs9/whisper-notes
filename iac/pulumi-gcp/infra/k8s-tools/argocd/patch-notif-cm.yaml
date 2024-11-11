@@ -4,7 +4,7 @@ metadata:
   name: argocd-cm
   namespace: argocd
 data:
-  url: argocd.shivanshs9.me
+  url: argocd.shivanshs9.me # CHANGEME: Desired ArgoCD URL
 
 ---
 apiVersion: v1
@@ -14,4 +14,4 @@ metadata:
   namespace: argocd
 data:
   context: |
-    argocdUrl: argocd.shivanshs9.me
+    argocdUrl: argocd.shivanshs9.me # CHANGEME: Desired ArgoCD URL

@@ -59,7 +59,7 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: whisper-notes-backend-headless.debug.svc.cluster.local # CHANGEME: target service FQDNS
+                address: whisper-notes-backend-headless.default.svc.cluster.local # CHANGEME: target service FQDNS (no need to change unless the service name is changed)
                 port_value: 8080
 admin:
   access_log_path: /dev/stdout

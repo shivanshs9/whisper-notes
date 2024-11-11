@@ -8,7 +8,7 @@ spec:
     - name: public-gateway
       namespace: default
   hostnames:
-    - "argocd.shivanshs9.me"
+    - "argocd.shivanshs9.me" # CHANGEME: Desired ArgoCD URL
   rules:
     - backendRefs:
         - name: argocd-server

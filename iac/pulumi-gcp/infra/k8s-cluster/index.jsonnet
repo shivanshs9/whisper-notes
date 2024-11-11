@@ -48,6 +48,22 @@
       saType: 'gke',
       Config: $.Config,
     },
+    k8sSaBinding1: (import '../../lib/iam/serviceaccount.libsonnet').RoleBinding {
+      serviceAccount: '${k8sServiceAccount.email}',
+      role: 'roles/artifactregistry.reader',
+    },
+    k8sSaBinding2: (import '../../lib/iam/serviceaccount.libsonnet').RoleBinding {
+      serviceAccount: '${k8sServiceAccount.email}',
+      role: 'roles/logging.logWriter',
+    },
+    k8sSaBinding3: (import '../../lib/iam/serviceaccount.libsonnet').RoleBinding {
+      serviceAccount: '${k8sServiceAccount.email}',
+      role: 'roles/monitoring.metricWriter',
+    },
+    k8sSaBinding4: (import '../../lib/iam/serviceaccount.libsonnet').RoleBinding {
+      serviceAccount: '${k8sServiceAccount.email}',
+      role: 'roles/monitoring.viewer',
+    },
     irsaSecretsSa: (import '../../lib/iam/serviceaccount.libsonnet').ServiceAccount {
       saType: 'irsa-secrets',
       Config: $.Config,

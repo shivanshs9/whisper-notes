@@ -23,4 +23,7 @@ jobs:
       repo: services/whisper-notes-frontend
       dockerfile: frontend.Dockerfile
       registry: europe-north1-docker.pkg.dev
+      # CHANGEME: Backend URL to use during frontend build
+      build_args: |
+        VITE_GRPC_BACKEND: https://whisper-notes.shivanshs9.me/api
     secrets: inherit

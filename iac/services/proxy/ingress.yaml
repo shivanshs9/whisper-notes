@@ -20,4 +20,5 @@ spec:
       matches:
         - path:
             type: PathPrefix
+            # serve under same domain as frontend but sub-path of /api
             value: /api

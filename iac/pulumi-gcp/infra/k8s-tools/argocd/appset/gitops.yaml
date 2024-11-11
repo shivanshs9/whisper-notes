@@ -13,7 +13,7 @@ spec:
     - git:
         directories:
           - path: iac/services/*
-        repoURL: https://github.com/shivanshs9/whisper-notes
+        repoURL: https://github.com/shivanshs9/whisper-notes # CHANGEME: If using a fork, repo name changes
         revision: main
   template:
     metadata:
@@ -30,7 +30,7 @@ spec:
       project: default
       source:
         path: '{{ path }}'
-        repoURL: https://github.com/shivanshs9/whisper-notes.git
+        repoURL: https://github.com/shivanshs9/whisper-notes.git # CHANGEME: If using a fork, repo name changes
         targetRevision: main
       syncPolicy:
         automated:

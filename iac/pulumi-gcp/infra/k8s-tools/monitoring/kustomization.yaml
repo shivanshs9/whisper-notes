@@ -5,7 +5,6 @@ resources:
   # Kube-State metrics
   - ksm.yaml
   - ksm-alerts.yaml
-  # Node exporter required by Kubecost
-  # ( deployed as a DaemonSet )
+  # Node exporter ( deployed as a DaemonSet )
   - node-exporter.yaml
   - node-exporter-alerts.yaml
