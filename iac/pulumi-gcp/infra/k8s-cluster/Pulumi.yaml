@@ -1,0 +1,12 @@
+name: k8s-cluster
+runtime:
+  name: yaml
+  options:
+    compiler: jsonnet index.jsonnet
+description: GCP Program to provision k8s cluster for whisper notes workload
+config:
+  project:
+    type: string
+    default: k8s-cluster
+  env:
+    type: string

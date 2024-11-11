@@ -1,0 +1,12 @@
+name: init-network-k8s
+runtime:
+  name: yaml
+  options:
+    compiler: jsonnet index.jsonnet
+description: GCP Program to provision vpc for the k8s cluster
+config:
+  project:
+    type: string
+    default: init-network-k8s
+  env:
+    type: string

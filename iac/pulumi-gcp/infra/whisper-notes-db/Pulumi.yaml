@@ -1,0 +1,12 @@
+name: whisper-notes-db
+runtime:
+  name: yaml
+  options:
+    compiler: jsonnet index.jsonnet
+description: GCP Program to provision DB for whisper-notes app
+config:
+  project:
+    type: string
+    default: whisper-notes-db
+  env:
+    type: string
