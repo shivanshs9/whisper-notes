@@ -19,7 +19,7 @@ function App() {
     };
 
     return IS_WEBGPU_AVAILABLE ? (
-        <div className='flex justify-center items-center min-h-screen'>
+        <div className='flex flex-col justify-center items-center min-h-screen'>
             <div className='container flex flex-col justify-center items-center'>
                 <div className='absolute top-4 left-4 z-20'>
                     <button onClick={toggleMenu} className='hamburger'>
@@ -28,7 +28,7 @@ function App() {
                 </div>
                 <div className={`menu ${menuOpen ? 'open' : ''}`}>
                     <a href='#' onClick={() => switchPage("create")} className='menu-item'>Write a new entry...</a>
-                    <a href='#' onClick={() => switchPage("list")} className='menu-item'>List Notes</a>
+                    <a href='#' onClick={() => switchPage("list")} className='menu-item'>Journal so far</a>
                 </div>
                 <h1 className='text-5xl font-extrabold tracking-tight text-slate-900 sm:text-7xl text-center'>
                     Whisper Notes
@@ -36,7 +36,7 @@ function App() {
                 {currentPage === "create" ? <CreateNote /> : <ListNotes />}
             </div>
 
-            <div className='absolute bottom-4'>
+            <div className='bottom-4'>
                 <p>
                 Made with{" "}
                 <a
