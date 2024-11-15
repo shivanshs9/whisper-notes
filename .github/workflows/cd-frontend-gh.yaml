@@ -1,0 +1,38 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+jobs:
+  deploy:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+      - name: Setup Node.js 📦
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23'
+      - name: Install Dependencies 📥
+        run: cd frontend && yarn --frozen-lockfile
+      - name: Build Project 🔧
+        run: |
+          cd frontend
+          mkdir -p src/generated && yarn protoc \
+            --ts_out src/generated/ \
+            --ts_opt long_type_string \
+            --proto_path ../protos \
+            --ts_opt ts_nocheck \
+            ../protos/*.proto
+          yarn build
+        env:
+          VITE_GRPC_BACKEND: "https://whisper-notes-api.shivanshs9.me"
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: frontend/dist
